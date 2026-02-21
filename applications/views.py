@@ -17,7 +17,7 @@ def create_application(request):
             application = form.save(commit=False)
             application.user = request.user
             application.save()
-            return redirect('/')
+            return redirect('dashboard')
     else:    
         form = ApplicationForm()
     return render(request, 'applications/create_application.html', {'form': form})
