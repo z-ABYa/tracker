@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Your Applications</h2>
+<p>Total Applications: {{ applications.count }}</p>
+<table border="1">
+    <tr>
+        <th>Company</th>
+        <th>Role</th>
+        <th>Status</th>
+        <th>Date</th>
+    </tr>
+    {% for app in applications %}
+    <tr>
+        <td>{{ app.company_name }}</td>
+        <td>{{ app.role }}</td>
+        <td>{{ app.get_status_display }}</td>
+        <td>{{ app.application_date }}</td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="4">No applications yet.</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

@@ -1,9 +1,13 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from .forms import ApplicationForm
+from .models import Application
 
-def home(request):
-    return render(request, 'home.html')
+
+@login_required
+def dashboard(request):
+    applications = Application.objects.filter(user=request.user).order_by('-created_at')
+    return render(request, 'applications/dashboard.html', {'applications': applications})
 
 @login_required
 def create_application(request):
