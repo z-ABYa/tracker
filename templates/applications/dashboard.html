@@ -9,6 +9,7 @@
         <th>Role</th>
         <th>Status</th>
         <th>Date</th>
+        <th>Actions</th>
     </tr>
     {% for app in applications %}
     <tr>
@@ -16,6 +17,9 @@
         <td>{{ app.role }}</td>
         <td>{{ app.get_status_display }}</td>
         <td>{{ app.application_date }}</td>
+        <td>
+            <a href="{% url 'delete_application' app.pk %}">Delete</a>
+        </td>
     </tr>
     {% empty %}
     <tr>
