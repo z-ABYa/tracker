@@ -30,3 +30,15 @@ def delete_application(request, pk):
         return redirect('dashboard')
     
     return render(request, 'applications/confirm_delete.html', {'application': application})
+
+@login_required
+def edit_application(request, pk):
+    application = get_object_or_404(Application, pk=pk, user=request.user)
+    if request.method == 'POST':
+        form = ApplicationForm(request.POST, instance=application)
+        if form.is_valid():
+            form.save()
+            return redirect('dashboard')
+            
+    form = ApplicationForm(instance=application)
+    return render(request, 'applications/edit_application.html', {'form': form})

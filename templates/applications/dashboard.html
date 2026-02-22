@@ -18,7 +18,8 @@
         <td>{{ app.get_status_display }}</td>
         <td>{{ app.application_date }}</td>
         <td>
-            <a href="{% url 'delete_application' app.pk %}">Delete</a>
+            <a href="{% url 'edit_application' app.pk %}">Edit</a> | 
+            <a href="{% url 'delete_application' app.pk %}">Delete</a> 
         </td>
     </tr>
     {% empty %}
