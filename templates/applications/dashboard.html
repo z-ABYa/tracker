@@ -2,6 +2,23 @@
 {% block content %}
 
 <h2>Your Applications</h2>
+<h3 style="display: inline;">Filter</h3>
+<form method="get">
+    <select name="status" onchange="this.form.submit()">
+        <option value="">All</option>
+        {% for value, label in statuses %}
+            <option value="{{ value }}"
+                {% if current_status == value %}
+                    selected
+                {% endif %}
+            >
+                {{ label }}
+            </option>
+        {% endfor %}
+    </select>
+</form>
+
+<hr>
 <p>Total Applications: {{ applications.count }}</p>
 <table border="1">
     <tr>

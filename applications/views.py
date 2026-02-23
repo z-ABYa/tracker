@@ -7,7 +7,15 @@ from .models import Application
 @login_required
 def dashboard(request):
     applications = Application.objects.filter(user=request.user).order_by('-created_at')
-    return render(request, 'applications/dashboard.html', {'applications': applications})
+    if status_filter := request.GET.get('status'):
+        applications = applications.filter(status=status_filter)
+    
+    statuses = Application.APPLICATION_STATUS
+    return render(request, 'applications/dashboard.html', {
+            'applications': applications,
+            'current_status': status_filter,
+            'statuses': statuses,
+        })
 
 @login_required
 def create_application(request):
