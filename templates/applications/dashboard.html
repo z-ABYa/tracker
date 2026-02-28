@@ -19,7 +19,7 @@
 </form>
 
 <hr>
-<p>Total Applications: {{ applications.count }}</p>
+<p>Total Applications: {{ page_obj.paginator.count }}</p>
 <table border="1">
     <tr>
         <th>Company</th>
@@ -28,7 +28,7 @@
         <th>Date</th>
         <th>Actions</th>
     </tr>
-    {% for app in applications %}
+    {% for app in page_obj %}
     <tr>
         <td>{{ app.company_name }}</td>
         <td>{{ app.role }}</td>
@@ -45,5 +45,25 @@
     </tr>
     {% endfor %}
 </table>
+
+<div>
+    {% if page_obj.has_previous %}
+        <a href="?page=1{% if current_status %}&status={{ current_status }}{% endif %}">First | </a>
+        <a href="?page={{ page_obj.previous_page_number }}{% if current_status %}&status={{ current_status }}{% endif %}">
+            Previous
+        </a>
+    {% endif %}
+
+    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{% if current_status %}&status={{ current_status }}{% endif %}">
+            Next | 
+        </a>
+        <a href="?page={{ page_obj.paginator.num_pages }}{% if current_status %}&status={{ current_status }}{% endif %}">
+            Last
+        </a>
+    {% endif %}
+</div>
 
 {% endblock %}
