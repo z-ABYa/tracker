@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
+from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import ApplicationForm
 from .models import Application
@@ -10,6 +11,12 @@ def dashboard(request):
     applications = Application.objects.filter(user=request.user).order_by('-created_at')
     if status_filter := request.GET.get('status'):
         applications = applications.filter(status=status_filter)
+        
+    if query := request.GET.get('q'):
+        applications = applications.filter(
+            Q(company_name__icontains=query) |
+            Q(role__icontains=query)
+        )
     
     paginator = Paginator(applications, 5)
     page_no = request.GET.get('page')

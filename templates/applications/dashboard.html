@@ -2,9 +2,10 @@
 {% block content %}
 
 <h2>Your Applications</h2>
+
 <h3 style="display: inline;">Filter</h3>
-<form method="get">
-    <select name="status" onchange="this.form.submit()">
+<form method="get" style="margin-bottom: 10px;">
+    <select name="status">
         <option value="">All</option>
         {% for value, label in statuses %}
             <option value="{{ value }}"
@@ -16,6 +17,9 @@
             </option>
         {% endfor %}
     </select>
+
+    <input type="text" name="q" placeholder="Search by company or role" value="{{ query }}">
+    <button type="submit">Apply</button>
 </form>
 
 <hr>
@@ -48,21 +52,15 @@
 
 <div>
     {% if page_obj.has_previous %}
-        <a href="?page=1{% if current_status %}&status={{ current_status }}{% endif %}">First | </a>
-        <a href="?page={{ page_obj.previous_page_number }}{% if current_status %}&status={{ current_status }}{% endif %}">
-            Previous
-        </a>
+        <a href="?page=1{% if current_status %}&status={{ current_status }}{% endif %}{% if query %}&q={{ query }}{% endif %}">First | </a>
+        <a href="?page={{ page_obj.previous_page_number }}{% if current_status %}&status={{ current_status }}{% endif %}{% if query %}&q={{ query }}{% endif %}">Previous</a>
     {% endif %}
 
     Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
 
     {% if page_obj.has_next %}
-        <a href="?page={{ page_obj.next_page_number }}{% if current_status %}&status={{ current_status }}{% endif %}">
-            Next | 
-        </a>
-        <a href="?page={{ page_obj.paginator.num_pages }}{% if current_status %}&status={{ current_status }}{% endif %}">
-            Last
-        </a>
+        <a href="?page={{ page_obj.next_page_number }}{% if current_status %}&status={{ current_status }}{% endif %}{% if query %}&q={{ query }}{% endif %}">Next | </a>
+        <a href="?page={{ page_obj.paginator.num_pages }}{% if current_status %}&status={{ current_status }}{% endif %}{% if query %}&q={{ query }}{% endif %}">Last</a>
     {% endif %}
 </div>
 
