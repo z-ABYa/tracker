@@ -3,6 +3,20 @@
 
 <h2>Your Applications</h2>
 
+<h3>Statistics</h3>
+<p><strong>Total Applications:</strong> {{ total_count }}</p>
+<ul>
+    <li>Applied: {{ stats_dict.A|default:0 }}</li>
+    <li>Interview: {{ stats_dict.I|default:0 }}</li>
+    <li>Rejected: {{ stats_dict.R|default:0 }}</li>
+    <li>Offer: {{ stats_dict.O|default:0 }}</li>
+</ul>
+
+<p><strong>Interview Rate:</strong> {{ interview_rate }}%</p>
+<p><strong>Offer Rate:</strong> {{ offer_rate }}%</p>
+
+<hr>
+
 <h3 style="display: inline;">Filter</h3>
 <form method="get" style="margin-bottom: 10px;">
     <select name="status">
@@ -23,7 +37,7 @@
 </form>
 
 <hr>
-<p>Total Applications: {{ page_obj.paginator.count }}</p>
+
 <table border="1">
     <tr>
         <th>Company</th>

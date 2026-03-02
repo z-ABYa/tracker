@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import ApplicationForm
 from .models import Application
@@ -18,6 +18,20 @@ def dashboard(request):
             Q(role__icontains=query)
         )
     
+    all_apps = Application.objects.filter(user=request.user)
+    total_count = all_apps.count()
+    stats_count = (
+        all_apps
+        .values('status')
+        .annotate(count=Count('status'))
+    )
+    stats_dict = {item['status']:item['count'] for item in stats_count}
+
+    interview_count = stats_dict.get('I', 0)
+    offer_count = stats_dict.get('O', 0)
+    interview_rate = round((interview_count / total_count) * 100, 2) if total_count > 0 else 0
+    offer_rate = round((offer_count / total_count) * 100, 2) if total_count > 0 else 0
+
     paginator = Paginator(applications, 5)
     page_no = request.GET.get('page')
     page_obj = paginator.get_page(page_no)
@@ -27,6 +41,10 @@ def dashboard(request):
             'page_obj': page_obj,
             'current_status': status_filter,
             'statuses': statuses,
+            'total_count': total_count,
+            'stats_dict': stats_dict,
+            'interview_rate': interview_rate,
+            'offer_rate': offer_rate,
         })
 
 @login_required
