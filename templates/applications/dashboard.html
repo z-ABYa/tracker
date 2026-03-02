@@ -1,81 +1,108 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h2>Your Applications</h2>
+<div class="page-header">
+    <h2>Your Applications</h2>
+    <p>Track your internship journey — from first click to offer.</p>
+</div>
 
-<h3>Statistics</h3>
-<p><strong>Total Applications:</strong> {{ total_count }}</p>
-<ul>
-    <li>Applied: {{ stats_dict.A|default:0 }}</li>
-    <li>Interview: {{ stats_dict.I|default:0 }}</li>
-    <li>Rejected: {{ stats_dict.R|default:0 }}</li>
-    <li>Offer: {{ stats_dict.O|default:0 }}</li>
-</ul>
+<!-- STATS -->
+<div class="stats-grid">
+    <div class="stat-card highlight">
+        <div class="stat-value">{{ total_count }}</div>
+        <div class="stat-label">Total</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ stats_dict.A|default:0 }}</div>
+        <div class="stat-label">Applied</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ stats_dict.I|default:0 }}</div>
+        <div class="stat-label">Interview</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ stats_dict.R|default:0 }}</div>
+        <div class="stat-label">Rejected</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ stats_dict.O|default:0 }}</div>
+        <div class="stat-label">Offer</div>
+    </div>
+</div>
 
-<p><strong>Interview Rate:</strong> {{ interview_rate }}%</p>
-<p><strong>Offer Rate:</strong> {{ offer_rate }}%</p>
+<div class="rates-row">
+    <div class="rate-chip">Interview rate &nbsp;<strong>{{ interview_rate }}%</strong></div>
+    <div class="rate-chip">Offer rate &nbsp;<strong>{{ offer_rate }}%</strong></div>
+</div>
 
-<hr>
-
-<h3 style="display: inline;">Filter</h3>
-<form method="get" style="margin-bottom: 10px;">
-    <select name="status">
-        <option value="">All</option>
-        {% for value, label in statuses %}
-            <option value="{{ value }}"
-                {% if current_status == value %}
-                    selected
-                {% endif %}
-            >
-                {{ label }}
-            </option>
-        {% endfor %}
-    </select>
-
-    <input type="text" name="q" placeholder="Search by company or role" value="{{ query }}">
-    <button type="submit">Apply</button>
+<!-- FILTER -->
+<div class="section-label">Filter &amp; Search</div>
+<form method="get">
+    <div class="filter-bar">
+        <select name="status">
+            <option value="">All statuses</option>
+            {% for value, label in statuses %}
+                <option value="{{ value }}" {% if current_status == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+        <input type="text" name="q" placeholder="Search company or role…" value="{{ query }}">
+        <button type="submit" class="btn btn-primary">Apply</button>
+        {% if current_status or query %}
+            <a href="?" class="btn btn-secondary">Clear</a>
+        {% endif %}
+    </div>
 </form>
 
-<hr>
+<!-- TABLE -->
+<div class="table-wrap">
+    <table>
+        <thead>
+            <tr>
+                <th>Company</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for app in page_obj %}
+            <tr>
+                <td><strong>{{ app.company_name }}</strong></td>
+                <td>{{ app.role }}</td>
+                <td>
+                    <span class="badge badge-{{ app.status }}">{{ app.get_status_display }}</span>
+                </td>
+                <td class="td-date">{{ app.application_date|date:"j F Y"  }}</td>
+                <td class="td-actions">
+                    <a href="{% url 'edit_application' app.pk %}" class="action-link action-edit">Edit</a>
+                    <a href="{% url 'delete_application' app.pk %}" class="action-link action-delete">Delete</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="td-empty">
+                    No applications yet. <a href="{% url 'create_application' %}">Add your first one →</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
-<table border="1">
-    <tr>
-        <th>Company</th>
-        <th>Role</th>
-        <th>Status</th>
-        <th>Date</th>
-        <th>Actions</th>
-    </tr>
-    {% for app in page_obj %}
-    <tr>
-        <td>{{ app.company_name }}</td>
-        <td>{{ app.role }}</td>
-        <td>{{ app.get_status_display }}</td>
-        <td>{{ app.application_date }}</td>
-        <td>
-            <a href="{% url 'edit_application' app.pk %}">Edit</a> | 
-            <a href="{% url 'delete_application' app.pk %}">Delete</a> 
-        </td>
-    </tr>
-    {% empty %}
-    <tr>
-        <td colspan="4">No applications yet.</td>
-    </tr>
-    {% endfor %}
-</table>
-
-<div>
+<!-- PAGINATION -->
+{% if page_obj.paginator.num_pages > 1 %}
+<div class="pagination">
     {% if page_obj.has_previous %}
-        <a href="?page=1{% if current_status %}&status={{ current_status }}{% endif %}{% if query %}&q={{ query }}{% endif %}">First | </a>
-        <a href="?page={{ page_obj.previous_page_number }}{% if current_status %}&status={{ current_status }}{% endif %}{% if query %}&q={{ query }}{% endif %}">Previous</a>
+        <a href="?page=1{% if current_status %}&status={{ current_status }}{% endif %}{% if query %}&q={{ query }}{% endif %}">« First</a>
+        <a href="?page={{ page_obj.previous_page_number }}{% if current_status %}&status={{ current_status }}{% endif %}{% if query %}&q={{ query }}{% endif %}">‹ Prev</a>
     {% endif %}
-
-    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-
+    <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
     {% if page_obj.has_next %}
-        <a href="?page={{ page_obj.next_page_number }}{% if current_status %}&status={{ current_status }}{% endif %}{% if query %}&q={{ query }}{% endif %}">Next | </a>
-        <a href="?page={{ page_obj.paginator.num_pages }}{% if current_status %}&status={{ current_status }}{% endif %}{% if query %}&q={{ query }}{% endif %}">Last</a>
+        <a href="?page={{ page_obj.next_page_number }}{% if current_status %}&status={{ current_status }}{% endif %}{% if query %}&q={{ query }}{% endif %}">Next ›</a>
+        <a href="?page={{ page_obj.paginator.num_pages }}{% if current_status %}&status={{ current_status }}{% endif %}{% if query %}&q={{ query }}{% endif %}">Last »</a>
     {% endif %}
 </div>
+{% endif %}
 
 {% endblock %}

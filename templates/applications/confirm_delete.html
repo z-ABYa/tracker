@@ -1,18 +1,29 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h2>Confirm Delete</h2>
-<p>Are you sure you want to delete this application?</p>
-<ul>
-    <li><strong>Company:</strong> {{ application.company_name }}</li>
-    <li><strong>Role:</strong> {{ application.role }}</li>
-    <li><strong>Status:</strong> {{ application.get_status_display }}</li>
-</ul>
+<div class="delete-wrap">
+    <div class="page-header">
+        <h2>Confirm Delete</h2>
+    </div>
 
-<form method="post" style="display:inline">
-    {% csrf_token %}
-    <button type="submit">Delete</button>
-</form>
-<a href="{% url 'dashboard' %}">Cancel</a>
+    <div class="delete-container card">
+        <div class="warning-icon">⚠️</div>
+        <p>Are you sure you want to delete this application? This action cannot be undone.</p>
+
+        <div class="detail-list">
+            <div class="delete-detail"><span>Company</span><br><strong>{{ application.company_name }}</strong></div>
+            <div class="delete-detail"><span>Role</span><br><strong>{{ application.role }}</strong></div>
+            <div class="delete-detail"><span>Status</span><br><strong>{{ application.get_status_display }}</strong></div>
+        </div>
+
+        <div class="form-actions">
+            <form method="post" style="display:inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Yes, Delete</button>
+            </form>
+            <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </div>
+</div>
 
 {% endblock %}
