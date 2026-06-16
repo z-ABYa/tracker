@@ -1,0 +1,1 @@
+from tracker.wsgi import application
